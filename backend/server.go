@@ -6,12 +6,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
 	//以下為測試用
-	"bytes"
-	"image"
-	"image/png"
-	"net/http"
 )
 
 type Event struct {
@@ -130,18 +125,20 @@ func summarizeWeek(c *gin.Context) {
 		}
 	}
 	//傳本週總結給AI
-	/*aiResponse := callAI(summary)
-	c.Data(200, "image/png", aiResponse) //回傳AI生成的內容*/
+	aiResponse := callAI(summary)
+	c.Data(200, "image/png", aiResponse) //回傳AI生成的內容
 
 	//以下為測試用
-	url := "https://via.placeholder.com/150.png"
-	resp, _ := http.Get(url)
-	defer resp.Body.Close()
-	img, _, _ := image.Decode(resp.Body)
-	var buf bytes.Buffer
-	_ = png.Encode(&buf, img)
-	imgBytes := buf.Bytes()
-	c.Data(200, "image/png", imgBytes)
+	/*
+		url := "https://via.placeholder.com/150.png"
+		resp, _ := http.Get(url)
+		defer resp.Body.Close()
+		img, _, _ := image.Decode(resp.Body)
+		var buf bytes.Buffer
+		_ = png.Encode(&buf, img)
+		imgBytes := buf.Bytes()
+		c.Data(200, "image/png", imgBytes)
+	*/
 }
 func main() {
 	router := gin.Default()
