@@ -2,11 +2,16 @@ package main
 
 import (
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	//以下為測試用
+	"bytes"
+	"image"
+	"image/png"
+	"net/http"
 )
 
 type Event struct {
@@ -115,32 +120,29 @@ func summarizeWeek(c *gin.Context) {
 		return
 	}
 	//收集這一整週的日記
-	var weekDiary = []dayDiary{}
+	var summary = []string{}
 	for _, day := range noteBook {
 		dayDate, _ := time.Parse("2006-01-02", day.Date)
 		if (dayDate.Equal(start) || dayDate.After(start)) && dayDate.Before(end.AddDate(0, 0, 1)) {
-			weekDiary = append(weekDiary, day)
+			for _, event := range day.Events {
+				summary = append(summary, event.Content)
+			}
 		}
 	}
-	var summaryBuilder strings.Builder
-	summaryBuilder.WriteString("本週總結：")
-	for _, day := range weekDiary {
-		dayDate, _ := time.Parse("2006-01-02", day.Date)
-		weekday := dayDate.Weekday()
-		summaryBuilder.WriteString(weekday.String() + ": ")
-		for j, event := range day.Events {
-			eventIdInADay := j + 1
-			summaryBuilder.WriteString("Event" + strconv.Itoa(eventIdInADay) + ":")
-			summaryBuilder.WriteString("{title:" + event.Title + ";content:" + event.Content + "}")
-			eventIdInADay++
-		}
-	}
-	summary := summaryBuilder.String()
 	//傳本週總結給AI
-	aiResponse := callAI(summary)
-	c.JSON(200, gin.H{"summary": aiResponse}) //回傳AI生成的內容
-}
+	/*aiResponse := callAI(summary)
+	c.Data(200, "image/png", aiResponse) //回傳AI生成的內容*/
 
+	//以下為測試用
+	url := "https://via.placeholder.com/150.png"
+	resp, _ := http.Get(url)
+	defer resp.Body.Close()
+	img, _, _ := image.Decode(resp.Body)
+	var buf bytes.Buffer
+	_ = png.Encode(&buf, img)
+	imgBytes := buf.Bytes()
+	c.Data(200, "image/png", imgBytes)
+}
 func main() {
 	router := gin.Default()
 	// Enable CORS
