@@ -1,45 +1,62 @@
 <template>
-  <v-row class="fill-height">
-    <v-col>
-      <v-sheet height="600">
-        <v-calendar
-          :events="events"
-          hide-week-number
-          next-icon="mdi-chevron-right"
-          prev-icon="mdi-chevron-left"
-        >
-          <template #event="{ event }">
-            <div class="center-content">
-              <v-chip 
-                @click="openDialog(event)" 
-                class="event chip-style my-1"
-                color="primary"
-                variant="elevated"
-                label
-              >
-                {{ event.title }}
-              </v-chip>
-            </div>
-          </template>
-        </v-calendar>
-      </v-sheet>
-    </v-col>
-    <EventDialog
-      v-model="dialog"
-      :event="selectedEvent"
-      @save="updateEvent"
-    />
-    <v-btn
-      location="bottom right"
-      position="fixed"
-      class="mx-10 my-5"
-      size="60"
+  <v-app>
+    <v-toolbar 
+      title="時光回憶錄"
       color="primary"
-      icon="mdi-plus"
-      floating
-      @click="addNewEvent()"
-    />
-  </v-row>
+    >
+      <v-btn
+        class="mr-5"
+        @click="handleDump()"
+        variant="tonal"
+      >
+        DUMP
+      </v-btn>
+    </v-toolbar>
+    <v-row>
+      <v-col cols="1"></v-col>
+      <v-col cols="10">
+        <v-sheet height="600">
+          <v-calendar
+            :events="events"
+            hide-week-number
+            next-icon="mdi-chevron-right"
+            prev-icon="mdi-chevron-left"
+            class="my-1"
+          >
+            <template #event="{ event }">
+              <div class="center-content">
+                <v-chip 
+                  @click="openDialog(event)" 
+                  class="event chip-style my-1"
+                  color="primary"
+                  variant="elevated"
+                  label
+                >
+                  {{ event.title }}
+                </v-chip>
+              </div>
+            </template>
+          </v-calendar>
+        </v-sheet>
+      </v-col>
+      <v-col cols="1"></v-col>
+      <EventDialog
+        v-model="dialog"
+        :event="selectedEvent"
+        @save="updateEvent"
+      />
+      <v-btn
+        location="bottom right"
+        position="fixed"
+        class="mx-10 my-5"
+        size="60"
+        color="primary"
+        icon="mdi-plus"
+        floating
+        @click="addNewEvent()"
+      />
+    </v-row>
+  </v-app>
 </template>
 
 <script setup>
@@ -47,11 +64,21 @@ import { onMounted, ref } from 'vue';
 import { useDate } from 'vuetify'
 import EventDialog from './components/EventDialog.vue';
 import * as eventService from './services/event.js'
+import { getDump } from './services/dump.js'
 
 const adapter = useDate();
 const events = ref([]);
 const selectedEvent = ref({});
 const dialog = ref(false);
+
+function handleDump() {
+  try {
+    const dumpPic = getDump();
+    console.log(dumpPic);
+  } catch (error) {
+    console.error("Error dumping data:", error);
+  }
+}
 
 function addEvent(id, name, start, end, diary = '') {
   events.value.push({ 

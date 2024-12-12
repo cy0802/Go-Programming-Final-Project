@@ -14,14 +14,13 @@ const vuetify = createVuetify({
   },
   directives,
   theme: {
-    defaultTheme: 'dark',
+    defaultTheme: 'light',
     themes: {
-      dark: {
-        dark: true,
+      light: {
         colors: {
-          background: '#121212',
-          surface: '#1E1E1E',
-          primary: '#03DAC6',
+          background: '#FFFFFF',
+          surface: '#FFFFFF',
+          primary: '#C09D9A',
           secondary: '#BB86FC',
           error: '#CF6679',
         },
