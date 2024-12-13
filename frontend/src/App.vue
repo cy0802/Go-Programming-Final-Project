@@ -45,6 +45,12 @@
         :event="selectedEvent"
         @save="updateEvent"
       />
+      <DumpDialog
+        v-model="dumpDialog"
+        :dumpData="dumpData"
+        :loading="loading"
+        @close="dumpDialog = false"
+      />
       <v-btn
         location="bottom right"
         position="fixed"
@@ -63,6 +69,7 @@
 import { onMounted, ref } from 'vue';
 import { useDate } from 'vuetify'
 import EventDialog from './components/EventDialog.vue';
+import DumpDialog from './components/DumpDialog.vue';
 import * as eventService from './services/event.js'
 import { getDump } from './services/dump.js'
 
@@ -70,11 +77,16 @@ const adapter = useDate();
 const events = ref([]);
 const selectedEvent = ref({});
 const dialog = ref(false);
+const dumpDialog = ref(false);
+const loading = ref(false);
+const dumpData = ref('');
 
-function handleDump() {
+async function handleDump() {
   try {
-    const dumpPic = getDump();
-    console.log(dumpPic);
+    dumpDialog.value = true;
+    loading.value = true;
+    dumpData.value = await getDump();
+    loading.value = false;
   } catch (error) {
     console.error("Error dumping data:", error);
   }
@@ -98,7 +110,7 @@ function openDialog(event) {
 }
 
 function updateEvent(updatedEvent, newEvent) {
-  const formattedDate = new Date(updatedEvent.start).toISOString().split('T')[0];
+  const formattedDate = new Date(updatedEvent.start).toLocaleDateString('zh-TW').replaceAll('/', '-');
   if (newEvent) {
     try {
       eventService.createEvent({ title: updatedEvent.title, date: formattedDate, diary: updatedEvent.diary });

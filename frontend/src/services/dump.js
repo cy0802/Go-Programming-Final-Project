@@ -10,8 +10,11 @@ const getDump = async () => {
   const formattedStartDate = formatDate(startDate);
   const formattedEndDate = formatDate(endDate);
   try {
-    const response = await axios.get(`${baseUrl}/summary/${formattedStartDate}/${formattedEndDate}`);
-    return response.data
+    const response = await axios.get(`${baseUrl}/summary/${formattedStartDate}/${formattedEndDate}`, {
+      responseType: 'blob',
+    });
+    const returnedData = URL.createObjectURL(response.data)
+    return returnedData;
   } catch (error) {
     console.error("Error fetching dumps:", error);
     throw error;
