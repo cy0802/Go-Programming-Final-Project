@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/png"
 	"os"
@@ -29,7 +30,7 @@ func getImagePrompt(events []string) string {
 }
 
 func getTextPrompt(events []string) string {
-	prompt := "用一句話總結以下內容，不超過30個字:\n"
+	prompt := "用一句話描述以下這周內容，不超過30個字:\n"
 	var builder strings.Builder
 	builder.WriteString(prompt)
 	for _, event := range events {
@@ -47,8 +48,13 @@ func addTextToImage(imageBytes []byte, text string) ([]byte, error) {
 	}
 
 	bounds := img.Bounds()
-	rgba := image.NewRGBA(bounds)
+	width := bounds.Dx()
+	height := bounds.Dy()
+	newHeight := height + 30
+	newBound := image.Rect(0, 0, width, newHeight)
+	rgba := image.NewRGBA(newBound)
 	draw.Draw(rgba, bounds, img, image.Point{}, draw.Over)
+	draw.Draw(rgba, image.Rect(0, height, width, newHeight), &image.Uniform{color.RGBA{255, 255, 255, 255}}, image.Point{}, draw.Src)
 
 	fontBytes, err := os.ReadFile("NotoSerifTC-Black.ttf")
 	if err != nil {
@@ -61,12 +67,12 @@ func addTextToImage(imageBytes []byte, text string) ([]byte, error) {
 
 	c := freetype.NewContext()
 	c.SetFont(font)
-	c.SetFontSize(30)
+	c.SetFontSize(24)
 	c.SetClip(rgba.Bounds())
 	c.SetDst(rgba)
-	c.SetSrc(image.White)
+	c.SetSrc(image.Black)
 
-	pt := freetype.Pt(bounds.Min.X+10, bounds.Max.Y-10)
+	pt := freetype.Pt(0, newHeight-5)
 
 	_, err = c.DrawString(text, pt)
 	if err != nil {
