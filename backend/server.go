@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	//以下為測試用
 )
 
 type Event struct {
@@ -125,7 +124,7 @@ func summarizeWeek(c *gin.Context) {
 		}
 	}
 	//傳本週總結給AI
-	aiResponse := callAI(summary)
+	aiResponse := CallAI(summary)
 	c.Data(200, "image/png", aiResponse) //回傳AI生成的內容
 
 	//以下為測試用

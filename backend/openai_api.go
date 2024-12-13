@@ -82,7 +82,7 @@ func addTextToImage(imageBytes []byte, text string) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func callAI(events []string) []byte {
+func CallAI(events []string) []byte {
 	err := godotenv.Load()
 	if err != nil {
 		panic(err)
