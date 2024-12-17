@@ -51,9 +51,9 @@ const updateEvent = async (event) => {
   }
 }
 
-const deleteEvent = async (date, id) => {
+const deleteEvent = async (id) => {
   try {
-    const response = await axios.delete(`${baseUrl}/diary/${date}/${id}`);
+    const response = await axios.delete(`${baseUrl}/diary/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting event:", error);

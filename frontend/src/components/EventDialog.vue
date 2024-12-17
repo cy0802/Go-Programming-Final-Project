@@ -10,8 +10,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+        <v-btn color="error" text @click="deleteEvent" v-if="!newEvent">Delete</v-btn>
         <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -27,7 +28,7 @@ const props = defineProps({
   newEvent: Boolean
 });
 
-const emit = defineEmits(['update:modelValue', 'save']);
+const emit = defineEmits(['update:modelValue', 'save', 'deleteEvent']);
 
 const dialog = ref(props.modelValue);
 const localEvent = ref({ ...props.event });
@@ -60,5 +61,10 @@ const save = () => {
 const close = () => {
   dialog.value = false;
   newEvent.value = false;
+};
+
+const deleteEvent = () => {
+  emit('deleteEvent', localEvent.value.id);
+  close();
 };
 </script>

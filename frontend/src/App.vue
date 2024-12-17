@@ -44,6 +44,7 @@
         v-model="dialog"
         :event="selectedEvent"
         @save="updateEvent"
+        @deleteEvent="deleteEvent"
       />
       <DumpDialog
         v-model="dumpDialog"
@@ -102,6 +103,16 @@ function addEvent(id, name, start, end, diary = '') {
     allDay: 1,
     diary: diary
   });
+}
+
+function deleteEvent(id) {
+  try {
+    eventService.deleteEvent(id);
+    const index = events.value.findIndex(event => event.id === id);
+    events.value.splice(index, 1);
+  } catch (error) {
+    console.error("Error deleting event:", error);
+  }
 }
 
 function openDialog(event) {
